@@ -15,11 +15,14 @@ jobs:
 
     - name: Unzip Source Code
       run: |
-        unzip -o Gen_Engine_V1_Latest_Source.zip -d .
-        # Check if extracted inside a subfolder and move contents to root
-        EXTRACTED_DIR=$(find . -maxdepth 1 -type d -name "Gen_Engine_V1_Latest_Source*" | head -n 1)
-        if [ -n "$EXTRACTED_DIR" ] && [ "$EXTRACTED_DIR" != "." ]; then
-          cp -rn "$EXTRACTED_DIR"/* . || true
+        unzip -o Gen_Engine_V1_Latest_Source.zip -d extracted_temp
+        cp -rn extracted_temp/*/* . || cp -rn extracted_temp/* . || true
+
+    - name: Fix Deprecated Java/Gradle Flags
+      run: |
+        # Remove old MaxPermSize flag from gradle.properties if exists
+        if [ -f gradle.properties ]; then
+          sed -i 's/-XX:MaxPermSize=[^ ]*//g' gradle.properties
         fi
 
     - name: Set up JDK 17
@@ -30,7 +33,7 @@ jobs:
         cache: gradle
 
     - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
+      run: chmod +x gradlew || true
 
     - name: Build Debug APK
       run: ./gradlew assembleDebug
