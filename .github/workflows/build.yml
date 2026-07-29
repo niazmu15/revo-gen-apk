@@ -15,8 +15,12 @@ jobs:
 
     - name: Unzip Source Code
       run: |
-        unzip -o Gen_Engine_V1_Latest_Source.zip -d extracted_temp
-        cp -rn extracted_temp/*/* . || cp -rn extracted_temp/* . || true
+        unzip -o Gen_Engine_V1_Latest_Source.zip -d .
+        # Check and move files if unzipped in subfolder
+        EXTRACTED_DIR=$(find . -maxdepth 1 -type d -name "Gen_Engine_V1_Latest_Source*" | head -n 1)
+        if [ -n "$EXTRACTED_DIR" ] && [ "$EXTRACTED_DIR" != "." ]; then
+          cp -rn "$EXTRACTED_DIR"/* . || true
+        fi
 
     - name: Fix Deprecated Java/Gradle Flags
       run: |
@@ -41,4 +45,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: app-debug
-        path: '/**/build/outputs/apk/**/*.apk'
+        path: app/build/outputs/apk/debug/*.apk
