@@ -20,7 +20,6 @@ jobs:
 
     - name: Fix Deprecated Java/Gradle Flags
       run: |
-        # Remove old MaxPermSize flag from gradle.properties if exists
         if [ -f gradle.properties ]; then
           sed -i 's/-XX:MaxPermSize=[^ ]*//g' gradle.properties
         fi
@@ -42,5 +41,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: app-debug
-        path: app/build/outputs/apk/debug/app-debug.apk
-        
+        path: '/**/build/outputs/apk/**/*.apk'
