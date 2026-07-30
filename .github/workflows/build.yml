@@ -23,19 +23,17 @@ jobs:
       - name: Extract ZIP Project
         run: |
           echo "Unzipping project source..."
-          unzip -o Gen_Engine_V1_Latest_Source.zip -d extracted_project
-          ls -la extracted_project
+          unzip -o Gen_Engine_V1_Latest_Source.zip
+          ls -la
 
       - name: Make Gradle wrapper executable
-        run: chmod +x extracted_project/gradlew
+        run: chmod +x ./gradlew
 
       - name: Build APK with Gradle
-        run: |
-          cd extracted_project
-          ./gradlew assembleDebug
+        run: ./gradlew assembleDebug
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-debug
-          path: extracted_project/app/build/outputs/apk/debug/*.apk
+          path: app/build/outputs/apk/debug/*.apk
