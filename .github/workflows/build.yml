@@ -40,10 +40,22 @@ jobs:
             echo "Found gradlew in: $SUBDIR"
           fi
 
+      - name: Fix Gradle Properties (Remove MaxPermSize)
+        run: |
+          # যদি gradle.properties ফাইল থাকে, তবে সেখান থেকে পুরনো MaxPermSize সরিয়ে ফেলা
+          PROP_FILE="${{ steps.find_dir.outputs.path }}/gradle.properties"
+          if [ -f "$PROP_FILE" ]; then
+            echo "Cleaning up gradle.properties..."
+            sed -i '/MaxPermSize/d' "$PROP_FILE"
+          fi
+
       - name: Make Gradle wrapper executable
         run: chmod +x ${{ steps.find_dir.outputs.path }}/gradlew
 
       - name: Build APK with Gradle
+        env:
+          # পুরনো পার্ম সাইজ বাদ দিয়ে আধুনিক জাভা আর্গুমেন্ট সেট করা
+          ORG_GRADLE_PROJECT_jvmargs: "-Xmx2048m -Dfile.encoding=UTF-8"
         run: |
           cd ${{ steps.find_dir.outputs.path }}
           ./gradlew assembleDebug
