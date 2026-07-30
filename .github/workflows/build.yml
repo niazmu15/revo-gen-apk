@@ -22,20 +22,20 @@ jobs:
 
       - name: Extract ZIP Project
         run: |
-          echo "Extracting ZIP file..."
-          # জিপ ফাইলের ভেতরে যদি আলাদা ফোল্ডার থাকে, তবে তা হ্যান্ডেল করার জন্য -q ব্যবহার করা হয়েছে
-          unzip -o Gen_Engine_V1_Latest_Source.zip -d project_source
+          echo "Finding and extracting ZIP file..."
+          # রিপোজিটরির ভেতরে থাকা যেকোনো জিপ ফাইল নিজে থেকেই খুঁজে বের করে আনজিপ করবে
+          ZIP_FILE=$(find . -maxdepth 1 -name "*.zip" | head -n 1)
+          echo "Found zip: $ZIP_FILE"
+          unzip -o "$ZIP_FILE" -d project_source
           ls -la project_source
 
       - name: Find Project Root Directory
         id: find_dir
         run: |
-          # জিপ ফাইলের ভেতরে মেইন প্রজেক্ট ফোল্ডার বা সরাসরি gradlew কোথায় আছে তা খুঁজে বের করা
           if [ -f "project_source/gradlew" ]; then
             echo "path=project_source" >> $GITHUB_OUTPUT
             echo "Found gradlew in root of extracted folder."
           else
-            # যদি জিপের ভেতরে আরেকটি সাব-ফোল্ডার থাকে
             SUBDIR=$(find project_source -maxdepth 2 -name "gradlew" -exec dirname {} \;)
             echo "path=$SUBDIR" >> $GITHUB_OUTPUT
             echo "Found gradlew in: $SUBDIR"
