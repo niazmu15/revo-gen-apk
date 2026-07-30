@@ -30,6 +30,11 @@ jobs:
         # Change Package Name
         sed -i 's/applicationId .*/applicationId "com.gencore4.app"/g' app/build.gradle || true
         
+        # FIX: Update package name in google-services.json to solve build error
+        if [ -f app/google-services.json ]; then
+          sed -i 's/"package_name": "[^"]*"/"package_name": "com.gencore4.app"/g' app/google-services.json || true
+        fi
+        
         # Apply the new Logo
         if [ -f logo.png ]; then
           cp logo.png app/src/main/res/mipmap-mdpi/ic_launcher.png || true
