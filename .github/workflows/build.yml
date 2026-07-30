@@ -22,6 +22,24 @@ jobs:
           cp -rn "$EXTRACTED_DIR"/* . || true
         fi
 
+    - name: Update App Name, Package & Logo
+      run: |
+        # Change App Name to GenCore4
+        sed -i 's/<string name="app_name".*>.*<\/string>/<string name="app_name">GenCore4<\/string>/g' app/src/main/res/values/strings.xml || true
+        
+        # Change Package Name
+        sed -i 's/applicationId .*/applicationId "com.gencore4.app"/g' app/build.gradle || true
+        
+        # Apply the new Logo
+        if [ -f logo.png ]; then
+          cp logo.png app/src/main/res/mipmap-mdpi/ic_launcher.png || true
+          cp logo.png app/src/main/res/mipmap-hdpi/ic_launcher.png || true
+          cp logo.png app/src/main/res/mipmap-xhdpi/ic_launcher.png || true
+          cp logo.png app/src/main/res/mipmap-xxhdpi/ic_launcher.png || true
+          cp logo.png app/src/main/res/mipmap-xxxhdpi/ic_launcher.png || true
+          cp logo.png app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml || true
+        fi
+
     - name: Fix Deprecated Java/Gradle Flags
       run: |
         if [ -f gradle.properties ]; then
