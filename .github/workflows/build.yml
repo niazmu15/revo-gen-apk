@@ -23,9 +23,8 @@ jobs:
       - name: Extract ZIP Project
         run: |
           echo "Finding and extracting ZIP file..."
-          # রিপোজিটরির ভেতরে থাকা যেকোনো জিপ ফাইল নিজে থেকেই খুঁজে বের করে আনজিপ করবে
           ZIP_FILE=$(find . -maxdepth 1 -name "*.zip" | head -n 1)
-          echo "Found zip: $ZIP_FILE"
+          echo "Using zip file: $ZIP_FILE"
           unzip -o "$ZIP_FILE" -d project_source
           ls -la project_source
 
